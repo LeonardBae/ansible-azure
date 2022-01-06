@@ -1,5 +1,6 @@
 - hosts: _web  
-  gather_facts: false
+  vars_files:
+    - ./remote_vars.yml
   become: true
   roles: 
     - role: web

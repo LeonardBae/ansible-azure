@@ -1,0 +1,4 @@
+# for remote connection
+ansible_user: azureuser
+ansible_password: quiett1527!!
+ansible_connection: ssh
