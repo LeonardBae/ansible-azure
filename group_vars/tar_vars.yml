@@ -1,0 +1,16 @@
+# for target
+location: koreacentral
+admin_username: azureuser
+admin_password: quiett1527!!
+tar_rg_name: tarRG
+tar_vnet_name: tarVNet
+tar_vnet_cidr: 10.0.0.0/16
+tar_web_subnet_name: tarWEBSubnet
+tar_web_subnet_cidr: 10.0.1.0/24
+tar_was_subnet_name: tarWASSubnet
+tar_was_subnet_cidr: 10.0.2.0/24
+tar_web_nic_name: tarWEBNIC
+tar_was_nsg_name: tarWASNIC 
+tar_web_nsg_name: tarWEBNIC 
+tar_was_vmss_name: tarWASVM
+tar_web_vm_name: tarWEBVM

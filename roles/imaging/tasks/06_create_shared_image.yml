@@ -1,0 +1,87 @@
+- hosts: localhost
+  connection: local
+  vars_files:
+    - ./src_vars.yml
+
+  tasks:
+    - name: Create shared image for WEB
+      azure_rm_galleryimage:
+        resource_group: "{{ src_rg_name }}"
+        gallery_name: "{{ src_shared_gallery_name }}"
+        name: "{{ src_web_shared_img_name }}"
+        location: "{{ location }}"
+        os_type: linux
+        os_state: generalized
+        identifier:
+          publisher: myPublisherName
+          offer: myOfferName
+          sku: mySkuName
+        description: Image description
+    
+    - name: Create or update a simple gallery WEB image version.
+      azure_rm_galleryimageversion:
+        resource_group: "{{ src_rg_name }}"
+        gallery_name: "{{ src_shared_gallery_name }}"
+        gallery_image_name: "{{ src_web_shared_img_name }}"
+        name: "{{ src_web_shared_img_version }}"
+        location: "{{ location }}"
+        publishing_profile:
+          end_of_life_date: "2023-10-01t00:00:00+00:00"
+          exclude_from_latest: yes
+          replica_count: 3
+          storage_account_type: Standard_LRS
+          target_regions:
+            - name: Korea Central
+              regional_replica_count: 1
+            # Korea South는 ZRS 지원하지 않음 하기 설정 사용 시 Provisioning State가 Failed 뜸
+            # - name: Korea South
+            #   regional_replica_count: 2
+            #   storage_account_type: Standard_ZRS
+          managed_image:
+            name: "{{ src_web_vm_img_name }}"
+            resource_group: "{{ src_rg_name }}"
+      register: output
+
+    - debug:
+        var: output
+
+    - name: Create shared image for WAS
+      azure_rm_galleryimage:
+        resource_group: "{{ src_rg_name }}"
+        gallery_name: "{{ src_shared_gallery_name }}"
+        name: "{{ src_was_shared_img_name }}"
+        location: "{{ location }}"
+        os_type: linux
+        os_state: generalized
+        identifier:
+          publisher: my2PublisherName
+          offer: my2OfferName
+          sku: my2SkuName
+        description: Image description
+    
+    - name: Create or update a simple gallery WAS image version.
+      azure_rm_galleryimageversion:
+        resource_group: "{{ src_rg_name }}"
+        gallery_name: "{{ src_shared_gallery_name }}"
+        gallery_image_name: "{{ src_was_shared_img_name }}"
+        name: "{{ src_was_shared_img_version }}"
+        location: "{{ location }}"
+        publishing_profile:
+          end_of_life_date: "2023-10-01t00:00:00+00:00"
+          exclude_from_latest: yes
+          replica_count: 3
+          storage_account_type: Standard_LRS
+          target_regions:
+            - name: Korea Central
+              regional_replica_count: 1
+            # Korea South는 ZRS 지원하지 않음 하기 설정 사용 시 Provisioning State가 Failed 뜸
+            # - name: Korea South
+            #   regional_replica_count: 2
+            #   storage_account_type: Standard_ZRS
+          managed_image:
+            name: "{{ src_was_vm_img_name }}"
+            resource_group: "{{ src_rg_name }}"
+      register: output
+
+    - debug:
+        var: output

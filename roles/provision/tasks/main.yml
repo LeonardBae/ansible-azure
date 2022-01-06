@@ -1,0 +1,111 @@
+---
+- name: Create source resource group if doesn't exist
+  azure_rm_resourcegroup:
+    name: "{{ src_rg_name }}"
+    location: "{{ location }}"
+
+- name: Create source virtual network
+  azure_rm_virtualnetwork:
+    resource_group: "{{ src_rg_name }}"
+    name: "{{ src_vnet_name }}"
+    address_prefixes: "{{ src_vnet_cidr }}"
+
+- name: Create Public IP for source WEB
+  azure_rm_publicipaddress:
+    resource_group: "{{ src_rg_name }}"
+    allocation_method: Static
+    name: "{{ src_web_public_ip_name }}"
+
+- name: Create Public IP for source WAS
+  azure_rm_publicipaddress:
+    resource_group: "{{ src_rg_name }}"
+    allocation_method: Static
+    name: "{{ src_was_public_ip_name }}"
+
+- name: Create NSG that allows SSH and HTTP
+  azure_rm_securitygroup: 
+    resource_group: '{{ src_rg_name }}'
+    name: '{{ src_nsg_name }}'
+    rules: 
+      - name: SSH 
+        protocol: Tcp 
+        destination_port_range: 22  
+        access: Allow  
+        priority: 100 
+        direction: Inbound
+      - name: WEB
+        protocol: Tcp 
+        destination_port_range: 80  
+        access: Allow  
+        priority: 101 
+        direction: Inbound
+      - name: WAS
+        protocol: Tcp 
+        destination_port_range: 8080  
+        access: Allow  
+        priority: 102
+        direction: Inbound
+
+- name: Create virtual network inteface cards for source WEB
+  azure_rm_networkinterface:
+    resource_group: "{{ src_rg_name }}"
+    name: "{{ src_web_nic_name }}"
+    virtual_network: "{{ src_vnet_name }}"
+    security_group: '{{ src_nsg_name }}'
+    ip_configurations:
+      - name: default
+        public_ip_address_name: "{{ src_web_public_ip_name }}"
+        primary: True
+        
+- name: Create virtual network inteface cards for source WAS
+  azure_rm_networkinterface:
+    resource_group: "{{ src_rg_name }}"
+    name: "{{ src_was_nic_name }}"
+    virtual_network: "{{ src_vnet_name }}"
+    security_group: '{{ src_nsg_name }}'
+    ip_configurations:
+      - name: default
+        public_ip_address_name: "{{ src_was_public_ip_name }}"
+        primary: True
+
+- name: Create source WEB VM
+  azure_rm_virtualmachine:
+    resource_group: "{{ src_rg_name }}"
+    name: "{{ src_web_vm_name }}"
+    admin_username: "{{ admin_username }}"
+    ssh_password_enabled: false
+    ssh_public_keys:
+      - path: /home/{{ admin_username }}/.ssh/authorized_keys
+        key_data: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+    vm_size: Standard_B1ms
+    network_interfaces: "{{ src_web_nic_name }}"
+    image:
+      offer: CentOS
+      publisher: OpenLogic
+      sku: '7.5'
+      version: latest
+    tags:
+      level: dev
+      application: web
+      image: srcimg
+
+- name: Create source WAS VM
+  azure_rm_virtualmachine:
+    resource_group: "{{ src_rg_name }}"
+    name: "{{ src_was_vm_name }}"
+    admin_username: "{{ admin_username }}"
+    ssh_password_enabled: false
+    ssh_public_keys:
+      - path: /home/{{ admin_username }}/.ssh/authorized_keys
+        key_data: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+    vm_size: Standard_B1ms
+    network_interfaces: "{{ src_was_nic_name }}"
+    image:
+      offer: CentOS
+      publisher: OpenLogic
+      sku: '7.5'
+      version: latest
+    tags:
+      level: dev
+      application: was
+      image: srcimg

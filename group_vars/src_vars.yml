@@ -1,0 +1,21 @@
+# for create source vm
+location: koreacentral
+src_rg_name: srcRG
+src_vnet_name: srcVNet
+src_vnet_cidr: 192.168.0.0/16
+src_was_nic_name: srcWASNIC
+src_was_public_ip_name: srcwasip 
+src_web_nic_name: srcWEBNIC
+src_web_public_ip_name: srcwebip 
+src_nsg_name: srcNSG
+src_was_vm_name: srcWASVM
+src_web_vm_name: srcWEBVM
+src_web_vm_img_name: srcWEBimg
+src_was_vm_img_name: srcWASimg
+src_shared_gallery_name: srcGallery
+src_web_shared_img_name: srcWEBSharedImg
+src_web_shared_img_version: 1.0.0
+src_was_shared_img_name: srcWASSharedImg
+src_was_shared_img_version: 1.0.0
+admin_username: azureuser
+admin_password: quiett1527!!
