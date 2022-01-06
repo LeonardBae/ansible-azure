@@ -1,0 +1,6 @@
+- hosts: _was
+  vars_files:
+    - group_vars/tomcat_vars.yml
+  become: true
+  roles: 
+    - role: was
