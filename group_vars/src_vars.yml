@@ -3,6 +3,8 @@ location: koreacentral
 src_rg_name: srcRG
 src_vnet_name: srcVNet
 src_vnet_cidr: 192.168.0.0/16
+src_subnet_name: srcSubnet
+src_subnet_cidr: 192.168.1.0/24
 src_was_nic_name: srcWASNIC
 src_was_public_ip_name: srcwasip 
 src_web_nic_name: srcWEBNIC

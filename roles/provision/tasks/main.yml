@@ -9,6 +9,13 @@
     resource_group: "{{ src_rg_name }}"
     name: "{{ src_vnet_name }}"
     address_prefixes: "{{ src_vnet_cidr }}"
+    
+- name: Add source subnet
+  azure_rm_subnet:
+    resource_group: "{{ src_rg_name }}"
+    name: "{{ src_subnet_name }}"
+    address_prefix: "{{ src_subnet_cidr }}"
+    virtual_network: "{{ src_vnet_name }}"
 
 - name: Create Public IP for source WEB
   azure_rm_publicipaddress:
@@ -51,6 +58,7 @@
     resource_group: "{{ src_rg_name }}"
     name: "{{ src_web_nic_name }}"
     virtual_network: "{{ src_vnet_name }}"
+    subnet: "{{ src_subnet_name }}"
     security_group: '{{ src_nsg_name }}'
     ip_configurations:
       - name: default
@@ -62,6 +70,7 @@
     resource_group: "{{ src_rg_name }}"
     name: "{{ src_was_nic_name }}"
     virtual_network: "{{ src_vnet_name }}"
+    subnet: "{{ src_subnet_name }}"
     security_group: '{{ src_nsg_name }}'
     ip_configurations:
       - name: default
