@@ -1,0 +1,34 @@
+- hosts: localhost
+  connection: local
+  vars_files:
+    - group_vars/src_vars.yml
+  roles: 
+    - role: provision
+      
+- hosts: _web  
+  vars_files:
+    - group_vars/httpd_vars.yml
+  become: true
+  roles: 
+    - role: web
+      
+- hosts: _was
+  vars_files:
+    - group_vars/tomcat_vars.yml
+  become: true
+  roles: 
+    - role: was
+      
+- hosts: localhost
+  connection: local
+  vars_files:
+    - group_vars/src_vars.yml
+  roles: 
+    - role: imaging
+      
+- hosts: localhost
+  connection: local
+  vars_files:
+    - group_vars/tar_vars.yml
+  roles: 
+    - role: deploy

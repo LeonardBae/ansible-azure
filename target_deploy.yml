@@ -1,6 +1,6 @@
 - hosts: localhost
   connection: local
   vars_files:
-    - group_vars/src_vars.yml
+    - group_vars/tar_vars.yml
   roles: 
-    - role: provision
+    - role: deploy
