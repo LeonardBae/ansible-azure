@@ -1,4 +1,5 @@
 - hosts: _web  
+  gather_facts: false
   become: true
   roles: 
     - role: web
