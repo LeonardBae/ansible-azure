@@ -1,0 +1,7 @@
+- hosts: localhost
+  connection: local
+  vars_files:
+    - group_vars/src_vars.yml
+  become: yes  
+  roles: 
+    - role: imaging

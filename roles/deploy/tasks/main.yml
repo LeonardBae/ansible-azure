@@ -1,114 +1,108 @@
-- hosts: localhost
-  connection: local
-  vars_files:
-    - ./src_vars.yml
-
-  tasks:
-    - name: Create target resource group if doesn't exist
-      azure_rm_resourcegroup:
-        name: "{{ tar_rg_name }}"
-        location: "{{ location }}"
+- name: Create target resource group if doesn't exist
+  azure_rm_resourcegroup:
+    name: "{{ tar_rg_name }}"
+    location: "{{ location }}"
     
-    - name: Create target virtual network
-      azure_rm_virtualnetwork:
-        resource_group: "{{ tar_rg_name }}"
-        name: "{{ tar_vnet_name }}"
-        address_prefixes: "{{ tar_vnet_cidr }}"
+- name: Create target virtual network
+  azure_rm_virtualnetwork:
+    resource_group: "{{ tar_rg_name }}"
+    name: "{{ tar_vnet_name }}"
+    address_prefixes: "{{ tar_vnet_cidr }}"
 
-    - name: Create NSG that allows SSH and HTTP for WEB
-      azure_rm_securitygroup: 
-        resource_group: '{{ tar_rg_name }}'
-        name: '{{ tar_web_nsg_name }}'
-        rules: 
-          - name: SSH 
-            protocol: Tcp 
-            destination_port_range: 22  
-            access: Allow  
-            priority: 100 
-            direction: Inbound
-          - name: WEB
-            protocol: Tcp 
-            destination_port_range: 80  
-            access: Allow  
-            priority: 101 
-            direction: Inbound
+- name: Create NSG that allows SSH and HTTP for WEB
+  azure_rm_securitygroup: 
+    resource_group: '{{ tar_rg_name }}'
+    name: '{{ tar_web_nsg_name }}'
+    rules: 
+      - name: SSH 
+        protocol: Tcp 
+        destination_port_range: 22  
+        access: Allow  
+        priority: 100 
+        direction: Inbound
+      - name: WEB
+        protocol: Tcp 
+        destination_port_range: 80  
+        access: Allow  
+        priority: 101 
+        direction: Inbound
 
-    - name: Create NSG that allows SSH and HTTP for WAS
-      azure_rm_securitygroup: 
-        resource_group: '{{ tar_rg_name }}'
-        name: '{{ tar_was_nsg_name }}'
-        rules: 
-          - name: SSH 
-            protocol: Tcp 
-            destination_port_range: 22  
-            access: Allow  
-            priority: 100 
-            direction: Inbound
-          - name: WAS
-            protocol: Tcp 
-            destination_port_range: 8080  
-            access: Allow  
-            priority: 101 
-            direction: Inbound
+- name: Create NSG that allows SSH and HTTP for WAS
+  azure_rm_securitygroup: 
+    resource_group: '{{ tar_rg_name }}'
+    name: '{{ tar_was_nsg_name }}'
+    rules: 
+      - name: SSH 
+        protocol: Tcp 
+        destination_port_range: 22  
+        access: Allow  
+        priority: 100 
+        direction: Inbound
+      - name: WAS
+        protocol: Tcp 
+        destination_port_range: 8080  
+        access: Allow  
+        priority: 101 
+        direction: Inbound
 
-    - name: Add target WEB subnet
-      azure_rm_subnet:
-        resource_group: "{{ tar_rg_name }}"
-        name: "{{ tar_web_subnet_name }}"
-        address_prefix: "{{ tar_web_subnet_cidr }}"
-        virtual_network: "{{ tar_vnet_name }}"
-        security_group: "{{ tar_web_nsg_name }}"
+- name: Add target WEB subnet
+  azure_rm_subnet:
+    resource_group: "{{ tar_rg_name }}"
+    name: "{{ tar_web_subnet_name }}"
+    address_prefix: "{{ tar_web_subnet_cidr }}"
+    virtual_network: "{{ tar_vnet_name }}"
+    security_group: "{{ tar_web_nsg_name }}"
 
-    - name: Add target WAS subnet
-      azure_rm_subnet:
-        resource_group: "{{ tar_rg_name }}"
-        name: "{{ tar_was_subnet_name }}"
-        address_prefix: "{{ tar_was_subnet_cidr }}"
-        virtual_network: "{{ tar_vnet_name }}"
-        security_group: "{{ tar_was_nsg_name }}"
+- name: Add target WAS subnet
+  azure_rm_subnet:
+    resource_group: "{{ tar_rg_name }}"
+    name: "{{ tar_was_subnet_name }}"
+    address_prefix: "{{ tar_was_subnet_cidr }}"
+    virtual_network: "{{ tar_vnet_name }}"
+    security_group: "{{ tar_was_nsg_name }}"
 
-    - name: Create target WEB VM
-      azure_rm_virtualmachine:
-        resource_group: "{{ tar_rg_name }}"
-        virtual_network_name: "{{ tar_vnet_name }}"
-        subnet_name: "{{ tar_web_subnet_name }}"
-        name: "{{ tar_web_vm_name }}"
-        admin_username: "{{ admin_username }}"
-        ssh_password_enabled: false
-        ssh_public_keys:
-          - path: /home/{{ admin_username }}/.ssh/authorized_keys
-            key_data: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
-        vm_size: Standard_B1ms
-        managed_disk_type: Standard_LRS
-        image:
-          id: "/subscriptions/{{ lookup('env', 'AZURE_SUBSCRIPTION_ID') }}/resourceGroups/{{ src_rg_name }}/providers/Microsoft.Compute/galleries/{{ src_shared_gallery_name }}/images/{{ src_web_shared_img_name }}/versions/{{ src_web_shared_img_version }}"
-        tags:
-          level: prd
-          application: web
-          image: tarimg
-      register: vmstat
+- name: Create target WEB VM
+  azure_rm_virtualmachine:
+    resource_group: "{{ tar_rg_name }}"
+    virtual_network_name: "{{ tar_vnet_name }}"
+    subnet_name: "{{ tar_web_subnet_name }}"
+    name: "{{ tar_web_vm_name }}"
+    admin_username: "{{ admin_username }}"
+    ssh_password_enabled: false
+    ssh_public_keys:
+      - path: /home/{{ admin_username }}/.ssh/authorized_keys
+        key_data: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+    vm_size: Standard_B1ms
+    managed_disk_type: Standard_LRS
+    image:
+      id: "/subscriptions/{{ lookup('env', 'AZURE_SUBSCRIPTION_ID') }}/resourceGroups/{{ src_rg_name }}/providers/Microsoft.Compute/galleries/{{ src_shared_gallery_name }}/images/{{ src_web_shared_img_name }}/versions/{{ src_web_shared_img_version }}"
+    tags:
+      level: prd
+      application: web
+      image: tarimg
+  register: webstat
 
-    - debug: 
-       var: vmstat.ansible_facts.azure_vm.properties.networkProfile.networkInterfaces[0].properties.ipConfigurations[0].properties.publicIPAddress.properties.ipAddress
+- debug: 
+    var: webstat.ansible_facts.azure_vm.properties.networkProfile.networkInterfaces[0].properties.ipConfigurations[0].properties.publicIPAddress.properties.ipAddress
 
-    - name: Create target WAS VMSS
-      azure_rm_virtualmachinescaleset:
-        resource_group: "{{ tar_rg_name }}"
-        virtual_network_name: "{{ tar_vnet_name }}"
-        subnet_name: "{{ tar_was_subnet_name }}"
-        name: "{{ tar_was_vmss_name }}"
-        admin_username: "{{ admin_username }}"
-        ssh_password_enabled: false
-        ssh_public_keys:
-          - path: /home/{{ admin_username }}/.ssh/authorized_keys
-            key_data: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
-        vm_size: Standard_B1ms
-        capacity: 2
-        managed_disk_type: Standard_LRS
-        upgrade_policy: Manual
-        image:
-          id: "/subscriptions/{{ lookup('env', 'AZURE_SUBSCRIPTION_ID') }}/resourceGroups/{{ src_rg_name }}/providers/Microsoft.Compute/galleries/{{ src_shared_gallery_name }}/images/{{ src_was_shared_img_name }}/versions/{{ src_was_shared_img_version }}"
-        tags:
-          level: prd
-          application: was
-          image: tarimg
+- name: Create target WAS VMSS
+  azure_rm_virtualmachinescaleset:
+    resource_group: "{{ tar_rg_name }}"
+    virtual_network_name: "{{ tar_vnet_name }}"
+    subnet_name: "{{ tar_was_subnet_name }}"
+    name: "{{ tar_was_vmss_name }}"
+    admin_username: "{{ admin_username }}"
+    ssh_password_enabled: false
+    ssh_public_keys:
+      - path: /home/{{ admin_username }}/.ssh/authorized_keys
+        key_data: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+    vm_size: Standard_B1ms
+    capacity: 2
+    managed_disk_type: Standard_LRS
+    upgrade_policy: Manual
+    image:
+      id: "/subscriptions/{{ lookup('env', 'AZURE_SUBSCRIPTION_ID') }}/resourceGroups/{{ src_rg_name }}/providers/Microsoft.Compute/galleries/{{ src_shared_gallery_name }}/images/{{ src_was_shared_img_name }}/versions/{{ src_was_shared_img_version }}"
+    tags:
+      level: prd
+      application: was
+      image: tarimg

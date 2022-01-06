@@ -1,0 +1,104 @@
+- name: Generalize WEB VM
+  azure_rm_virtualmachine:
+    resource_group: "{{ src_rg_name }}"
+    name: "{{ src_web_vm_name }}"
+    generalized: yes
+
+- name: Generalize WAS VM
+  azure_rm_virtualmachine:
+    resource_group: "{{ src_rg_name }}"
+    name: "{{ src_was_vm_name }}"
+    generalized: yes
+
+- name: Create custom image for WEB VM
+  azure_rm_image:
+    resource_group: "{{ src_rg_name }}"
+    name: "{{ src_web_vm_img_name }}"
+    source: "{{ src_web_vm_name }}"
+        
+- name: Create custom image for WAS VM
+  azure_rm_image:
+    resource_group: "{{ src_rg_name }}"
+    name: "{{ src_was_vm_img_name }}"
+    source: "{{ src_was_vm_name }}"
+
+- name: Create shared image gallery
+  azure_rm_gallery:
+    resource_group: "{{ src_rg_name }}"
+    name: "{{ src_shared_gallery_name }}"
+    location: "{{ location }}"
+    description: This is the gallery description.
+
+- name: Create shared image for WEB
+  azure_rm_galleryimage:
+    resource_group: "{{ src_rg_name }}"
+    gallery_name: "{{ src_shared_gallery_name }}"
+    name: "{{ src_web_shared_img_name }}"
+    location: "{{ location }}"
+    os_type: linux
+    os_state: generalized
+    identifier:
+      publisher: myPublisherName
+      offer: myOfferName
+      sku: mySkuName
+    description: Image description
+    
+- name: Create or update a simple gallery WEB image version.
+  azure_rm_galleryimageversion:
+    resource_group: "{{ src_rg_name }}"
+    gallery_name: "{{ src_shared_gallery_name }}"
+    gallery_image_name: "{{ src_web_shared_img_name }}"
+    name: "{{ src_web_shared_img_version }}"
+    location: "{{ location }}"
+    publishing_profile:
+      end_of_life_date: "2023-10-01t00:00:00+00:00"
+      exclude_from_latest: yes
+      replica_count: 3
+      storage_account_type: Standard_LRS
+      target_regions:
+        - name: Korea Central
+          regional_replica_count: 1
+      managed_image:
+        name: "{{ src_web_vm_img_name }}"
+        resource_group: "{{ src_rg_name }}"
+  register: output
+
+- debug:
+    var: output
+
+- name: Create shared image for WAS
+  azure_rm_galleryimage:
+    resource_group: "{{ src_rg_name }}"
+    gallery_name: "{{ src_shared_gallery_name }}"
+    name: "{{ src_was_shared_img_name }}"
+    location: "{{ location }}"
+    os_type: linux
+    os_state: generalized
+    identifier:
+      publisher: my2PublisherName
+      offer: my2OfferName
+      sku: my2SkuName
+    description: Image description
+    
+- name: Create or update a simple gallery WAS image version.
+  azure_rm_galleryimageversion:
+    resource_group: "{{ src_rg_name }}"
+    gallery_name: "{{ src_shared_gallery_name }}"
+    gallery_image_name: "{{ src_was_shared_img_name }}"
+    name: "{{ src_was_shared_img_version }}"
+    location: "{{ location }}"
+    publishing_profile:
+      end_of_life_date: "2023-10-01t00:00:00+00:00"
+      exclude_from_latest: yes
+      replica_count: 3
+      storage_account_type: Standard_LRS
+      target_regions:
+        - name: Korea Central
+          regional_replica_count: 1
+      managed_image:
+        name: "{{ src_was_vm_img_name }}"
+        resource_group: "{{ src_rg_name }}"
+  register: output
+
+- debug:
+    var: output
