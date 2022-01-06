@@ -1,6 +1,6 @@
 - hosts: _web  
   vars_files:
-    - ./remote_vars.yml
+    - ./httpd_vars.yml
   become: true
   roles: 
     - role: web
