@@ -1,26 +1,14 @@
-- hosts: _web
-  gather_facts: false
-  vars_files:
-    - ./src_vars.yml
+- name: Ensure apache is at the latest version
+  yum: name=httpd state=latest
 
-  tasks:
-    - name: run ping
-      ping:
+- name: Change permissions of /var/www/html
+  file: path=/var/www/html mode=0777
 
-    - name: Ensure apache is at the latest version
-      yum: name=httpd state=latest
-      become: true
+- name: Download index.html
+  get_url:
+    url: https://raw.githubusercontent.com/erjosito/Azure-Ansible-Examples/master/index.html
+    dest: /var/www/html/index.html
+    mode: 0644
 
-    - name: Change permissions of /var/www/html
-      file: path=/var/www/html mode=0777
-      become: true
-
-    - name: Download index.html
-      get_url:
-        url: https://raw.githubusercontent.com/erjosito/Azure-Ansible-Examples/master/index.html
-        dest: /var/www/html/index.html
-        mode: 0644
-
-    - name: Ensure apache is running (and enable it at boot)
-      service: name=httpd state=started enabled=yes
-      become: true
+- name: Ensure apache is running (and enable it at boot)
+  service: name=httpd state=started enabled=yes
