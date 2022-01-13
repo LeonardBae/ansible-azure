@@ -85,7 +85,7 @@
     ssh_password_enabled: false
     ssh_public_keys:
       - path: /home/{{ admin_username }}/.ssh/authorized_keys
-        key_data: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDRJ/xkWigsnIfDlWNUN5zCUUu4im203n+uvzoKfNcddaZbJRE1uEQCCNP5Vgxrj5jnVRukpp2jfSjeWdOolUNRHcvdLGjhZcCsRYdkQlEK4ObIjH/EDsquLXso+s5pOOxNIY6pHydQf3D8PKZuGkdv5WGmU/CqkRTKHYUJSr1+eg5LgHJKlkFZi98LXr+9FQjeqlEsplbCs6OhlGPo49tQld538q8b6FygUqXifneXbPlVVwB8tx/WZoC33pQKaSNooxDiRj55FORoXl4FfEtI0AWxNRVeQmYEBPBi58uEpiFg33pANlmeHoJWW6oMjcgeGqrKC9HZo+HyFmRsYYGQoWPJ8Q4pmg0T1qa3ooB7MKaXH+0BsLRQd587GNbVsLno+EY9hAGgCVUI9tcUUnVS6YWqsvm1CCYkx087UeECqvfuMBt5rwzCLXIZA8+zsRjvvpJ99bIqjXlZnEilC4FX+kgws2AoYA1fheRDbPjSFwn25W5pibUBAVSGgUOxYMPh4XYeNeQC6w25fWrQN7moP2xksn+eauRiZTUQ7fFbgCDYzIIV4y1EmtnzOGmsD8EP7EpVWr6W8EBOYbsMuusRhn0SyPFVMhqZ0tx39NyDs93/82MHGbgZxGf8jyBscwG40dOuyUeW8L8BZGRFU/Cl3rlyf94HeEoaaEa2wkaouw== azureuser@ansible-control"
+        key_data: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
     vm_size: Standard_B1ms
     network_interfaces: "{{ src_web_nic_name }}"
     image:
@@ -106,7 +106,7 @@
     ssh_password_enabled: false
     ssh_public_keys:
       - path: /home/{{ admin_username }}/.ssh/authorized_keys
-        key_data: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDRJ/xkWigsnIfDlWNUN5zCUUu4im203n+uvzoKfNcddaZbJRE1uEQCCNP5Vgxrj5jnVRukpp2jfSjeWdOolUNRHcvdLGjhZcCsRYdkQlEK4ObIjH/EDsquLXso+s5pOOxNIY6pHydQf3D8PKZuGkdv5WGmU/CqkRTKHYUJSr1+eg5LgHJKlkFZi98LXr+9FQjeqlEsplbCs6OhlGPo49tQld538q8b6FygUqXifneXbPlVVwB8tx/WZoC33pQKaSNooxDiRj55FORoXl4FfEtI0AWxNRVeQmYEBPBi58uEpiFg33pANlmeHoJWW6oMjcgeGqrKC9HZo+HyFmRsYYGQoWPJ8Q4pmg0T1qa3ooB7MKaXH+0BsLRQd587GNbVsLno+EY9hAGgCVUI9tcUUnVS6YWqsvm1CCYkx087UeECqvfuMBt5rwzCLXIZA8+zsRjvvpJ99bIqjXlZnEilC4FX+kgws2AoYA1fheRDbPjSFwn25W5pibUBAVSGgUOxYMPh4XYeNeQC6w25fWrQN7moP2xksn+eauRiZTUQ7fFbgCDYzIIV4y1EmtnzOGmsD8EP7EpVWr6W8EBOYbsMuusRhn0SyPFVMhqZ0tx39NyDs93/82MHGbgZxGf8jyBscwG40dOuyUeW8L8BZGRFU/Cl3rlyf94HeEoaaEa2wkaouw== azureuser@ansible-control"
+        key_data: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
     vm_size: Standard_B1ms
     network_interfaces: "{{ src_was_nic_name }}"
     image:
