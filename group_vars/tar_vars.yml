@@ -7,7 +7,7 @@ src_web_shared_img_version: 1.0.0
 src_was_shared_img_name: srcWASSharedImg
 src_was_shared_img_version: 1.0.0
 admin_username: azureuser
-admin_password: quiett1527!!
+admin_password: password123!@#
 tar_rg_name: tarRG
 tar_vnet_name: tarVNet
 tar_vnet_cidr: 10.0.0.0/16
