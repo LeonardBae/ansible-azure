@@ -1,5 +1,11 @@
 # for target
 location: koreacentral
+src_rg_name: srcRG
+src_shared_gallery_name: srcGallery
+src_web_shared_img_name: srcWEBSharedImg
+src_web_shared_img_version: 1.0.0
+src_was_shared_img_name: srcWASSharedImg
+src_was_shared_img_version: 1.0.0
 admin_username: azureuser
 admin_password: quiett1527!!
 tar_rg_name: tarRG
